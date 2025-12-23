@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('title')
-<title> Cakra | Report </title>
+<title> Absensi | Report </title>
 <style>
     @media print{
        .sticky-footer,.waktu,.heder,.btn{display: none;}
