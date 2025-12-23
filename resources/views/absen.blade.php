@@ -36,7 +36,7 @@
                         Tanggal <span style="font-style: italic;">(required)</span>
                     </label>
 
-                    <input type="date" name="tanggal" value="{{ $tgl->format('Y-m-d') }}" class="mt-2 form-control"
+                    <input type="date" name="tanggal" value="{{ $tgl->format('d-m-Y') }}" class="mt-2 form-control"
                         id="tanggal" required>
 
                     <input type="text" value="{{ $tgl }}" hidden class="mt-2 form-control" name ="tanggal">
