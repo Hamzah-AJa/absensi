@@ -40,7 +40,7 @@
                                     <td>
                                         @if ($a->keterangan == 'Sakit')
                                             <span class="badge bg-warning">{{ $a->keterangan }}</span>
-                                        @elseif ($a->keterangan == 'Ijin')
+                                        @elseif ($a->keterangan == 'Hadir')
                                             <span class="badge bg-success">{{ $a->keterangan }}</span>
                                         @else
                                             <span class="badge bg-danger">{{ $a->keterangan }}</span>
