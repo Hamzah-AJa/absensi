@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('title')
-<title>Cakra | Data admin</title>
+<title>Absensi | Data admin</title>
 @endsection
 @section('content')
 <div class="container">

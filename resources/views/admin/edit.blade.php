@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('title')
-<title>Cakra | {{ $user->nama }}</title>
+<title>Absensi | {{ $user->nama }}</title>
 @endsection
 @section('content')
 

@@ -50,7 +50,6 @@ class SiswaController extends Controller
         $request->validate([
             'nama' => 'required',
             'email' => 'nullable',
-            'notelp' => 'nullable',
             'alamat' => 'nullable'
         ]);
         Siswa::create($request->all());

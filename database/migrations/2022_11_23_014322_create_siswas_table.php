@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('nama');
             $table->string('email')->unique()->nullable();
             $table->text('alamat')->nullable();
-            $table->string('notelp')->nullable();
             $table->timestamps();
         });
     }
