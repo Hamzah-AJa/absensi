@@ -103,6 +103,36 @@
                 </tbody>
             </table>
         </div>
+        <Table class="table mt-4 table-bordered mb-4" style="margin-bottom: 100px" id="myTable">
+        <thead>
+            <tr>
+                    <th>ID</th>
+                    <th>Nama</th>
+                    <th>No Telepon</th>
+                    <th>Kelas</th>
+                    <th>Alamat</th>
+                    <th>Action</th>
+                </tr>
+        </thead>
+        <tbody>
+            @foreach ($siswa as $s)
+               <tr>
+                   <td width=5%>{{ $s->id_siswa }}</td>
+                   <td  width=25%> {{ $s->nama }}</td>
+                   <td width=15%> {{ $s->notelp }}</td>
+                   <td width=15%> {{ $s->email }}</td>
+                   <td> {{ $s->alamat }}</td>
+                   <td width=10%>
+                    <div class="d-flex">
+                        <a href="/siswa/{{ $s->id_siswa }}" class="btn btn-warning text-white"><i class="fa fa-pen" aria-hidden="true"></i></a>
+                        <a href="/siswa/{{ $s->id_siswa }}/delete"  onclick="return confirm('Apakah kamu yakin ingin menghapus data?')" class="ms-2 btn btn-danger text-white"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                    </div>
+                   </td>
+               </tr>
+               @endforeach
+        </tbody>
+        </Table>
+>>>>>>> a717ed5518054a879b543fda971b0b3e9975dcee
     </div>
 </div>
 

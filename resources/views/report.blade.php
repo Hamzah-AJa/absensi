@@ -109,7 +109,7 @@
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>Nama</th>
                         <th>Kelas</th>
                         <th>Hadir</th>

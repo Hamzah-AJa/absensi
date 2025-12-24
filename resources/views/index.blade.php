@@ -107,7 +107,7 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>ID</th>
                                     <th>Tanggal</th>
                                     <th>Nama</th>
                                     <th>Kelas</th>
@@ -178,7 +178,7 @@
                         <table class="table table-bordered" id="myTable">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>ID</th>
                                     <th>Tanggal</th>
                                     <th>Nama</th>
                                     <th>Kelas</th>
