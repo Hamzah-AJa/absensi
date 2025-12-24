@@ -53,7 +53,7 @@
             </div>
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>Nama</th>
                         <th>Hadir</th>
                         <th>Ijin</th>

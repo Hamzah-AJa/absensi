@@ -17,7 +17,7 @@
         <Table class="table mt-4 table-bordered mb-4" style="margin-bottom: 100px" id="myTable">
         <thead>
             <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Nama</th>
                     <th>No Telepon</th>
                     <th>Email</th>

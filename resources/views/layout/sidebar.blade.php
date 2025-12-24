@@ -29,21 +29,24 @@
      <div class="sidebar-heading">
          Data
      </div>
-     <li class="nav-item {{ Request::is('admin*') ? 'active' : '' }}">
-         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseone"
-             aria-expanded="true" aria-controls="collapseone">
-             <i class="fas fa-fw fa-cog"></i>
-             <span>Admin</span>
-         </a>
-         <div id="collapseone" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-             <div class="bg-white py-2 collapse-inner rounded">
-                 <h6 class="collapse-header">Inner</h6>
-                 <a class="collapse-item" href="/admin">Data Admin</a>
-                 <a class="collapse-item" href="/admin/create">Create</a>
+     @if (auth()->user()->role === 'admin')
+         <li class="nav-item {{ Request::is('admin*') ? 'active' : '' }}">
+             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseone"
+                 aria-expanded="true" aria-controls="collapseone">
+                 <i class="fas fa-fw fa-cog"></i>
+                 <span>Admin</span>
+             </a>
+             <div id="collapseone" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                 <div class="bg-white py-2 collapse-inner rounded">
+                     <h6 class="collapse-header">Inner</h6>
+                     <a class="collapse-item" href="/admin">Data Admin</a>
+                     <a class="collapse-item" href="/admin/create">Create</a>
 
+                 </div>
              </div>
-         </div>
-     </li>
+         </li>
+     @endif
+
 
      <li class="nav-item {{ Request::is('absen*') ? 'active' : '' }}">
          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseuser"

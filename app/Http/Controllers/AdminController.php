@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -47,7 +48,8 @@ class AdminController extends Controller
         User::create([
             'nama' => $request->nama,
             'username' => $request->username,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'role' => 'guru'
         ]);
         Alert::success('success', 'Data berhasil dibuat');
         return redirect('/admin');
@@ -88,13 +90,12 @@ class AdminController extends Controller
         $user->update($request->all());
         Alert::success('Success', 'Edit data berhasil');
         return redirect('/admin');
-
     }
     public function changepassword(Request $request, User $user)
     {
         // dd($request);
         $request->validate([
-            'password'=> 'required'
+            'password' => 'required'
         ]);
         $user->update($request->all());
         Alert::success('Success', 'Edit data berhasil');
