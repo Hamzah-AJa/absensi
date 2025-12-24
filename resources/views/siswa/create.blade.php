@@ -18,11 +18,16 @@
                                     style="font-style: italic;">(required)</span></label>
                             <input type="text" class="form-control" name="nama" id="nama" autofocus
                                 placeholder="Jamal">
+                            
+                            <label for="notelp" class="mt-3 form-label"> Nomor Telepon <span
+                                    style="font-style: italic;">(required)</span></label>
+                            <input type="text" class="form-control" name="notelp" id="notelp" autofocus
+                                placeholder="08123456789">
 
                             <label for="email" class="mt-3 form-label"> Email <span
                                     style="font-style: italic;">(required)</span></label>
                             <input type="text" class="form-control" name="email" id="email" autofocus
-                                placeholder="Jamal@gmail.com">
+                                placeholder="XII PPLG 2">
                         </div>
 
                         <div class="col-md-6">

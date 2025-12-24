@@ -21,6 +21,9 @@
 
                                 <label for="email" class="mt-3 form-label"> Email <span style="font-style: italic;">(required)</span></label>
                                 <input type="text" class="form-control" name="email" id="email" autofocus value="{{ $siswa->email }}">
+
+                                <label for="notelp" class="mt-3 form-label"> Nomor Telepon <span style="font-style: italic;">(required)</span></label>
+                                <input type="text" class="form-control" name="notelp" id="email" autofocus value="{{ $siswa->notelp }}">
                             </div>
 
                             <div class="col-md-6">

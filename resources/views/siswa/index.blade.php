@@ -19,6 +19,7 @@
             <tr>
                     <th>#</th>
                     <th>Nama</th>
+                    <th>No Telepon</th>
                     <th>Email</th>
                     <th>Alamat</th>
                     <th>Action</th>
@@ -29,6 +30,7 @@
                <tr>
                    <td width=5%>{{ $s->id_siswa }}</td>
                    <td  width=25%> {{ $s->nama }}</td>
+                   <td width=15%> {{ $s->notelp }}</td>
                    <td width=15%> {{ $s->email }}</td>
                    <td> {{ $s->alamat }}</td>
                    <td width=10%>
