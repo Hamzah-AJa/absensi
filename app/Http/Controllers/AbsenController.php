@@ -20,20 +20,29 @@ class AbsenController extends Controller
             return redirect('/');
         }
 
-        // daftar kelas unik dari siswas.email
+        // =========================
+        // DAFTAR KELAS
+        // =========================
         $listKelas = Siswa::whereNotNull('email')
             ->distinct()
             ->pluck('email');
 
-        // query absen total
+        // =========================
+        // ABSEN TOTAL (7 HARI TERAKHIR)
+        // =========================
         $absenQuery = Absensi::with('siswa')
-            ->orderBy('id_absensi', 'desc');
+            ->whereDate('tanggal', '>=', Carbon::now()->subDays(7))
+            ->orderBy('tanggal', 'desc');
 
-        // query absen hari ini
+        // =========================
+        // ABSEN HARI INI
+        // =========================
         $absenNowQuery = Absensi::with('siswa')
-            ->where('tanggal', Carbon::now()->format('Y/m/d'));
+            ->whereDate('tanggal', Carbon::today());
 
-        // jika ada filter kelas (kelas = kolom email di tabel siswas)
+        // =========================
+        // FILTER KELAS (EMAIL = KELAS)
+        // =========================
         if ($request->filled('kelas')) {
             $kelas = $request->kelas;
 
@@ -46,10 +55,17 @@ class AbsenController extends Controller
             });
         }
 
+        // =========================
+        // EKSEKUSI QUERY
+        // =========================
         $absens   = $absenQuery->get();
         $absennow = $absenNowQuery->get();
 
-        return view('index', compact('absens', 'absennow', 'listKelas'));
+        return view('index', compact(
+            'absens',
+            'absennow',
+            'listKelas'
+        ));
     }
 
     /**
@@ -78,11 +94,6 @@ class AbsenController extends Controller
         return view('absen', compact('siswa', 'tgl', 's'));
     }
 
-    public function create()
-    {
-        //
-    }
-
     /**
      * Simpan absen baru.
      */
@@ -102,13 +113,7 @@ class AbsenController extends Controller
 
         Alert::success('Success', 'Data berhasil dibuat');
 
-        // kembali ke halaman form absen lagi
         return redirect()->back();
-    }
-
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -169,7 +174,7 @@ class AbsenController extends Controller
     }
 
     /**
-     * Report default (tanpa filter tanggal request).
+     * Report default.
      */
     public function report()
     {
@@ -190,7 +195,7 @@ class AbsenController extends Controller
     }
 
     /**
-     * Report dengan filter tanggal + kelas.
+     * Report search.
      */
     public function reportsearch(Request $request)
     {
