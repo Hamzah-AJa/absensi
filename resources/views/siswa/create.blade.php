@@ -17,8 +17,8 @@
                             <label for="nama" class="mt-2 form-label"> Nama Siswa <span
                                     style="font-style: italic;">(required)</span></label>
                             <input type="text" class="form-control" name="nama" id="nama" autofocus
-                                placeholder="Jamal">
-                            
+                                placeholder="Alex">
+
                             <label for="notelp" class="mt-3 form-label"> Nomor Telepon <span
                                     style="font-style: italic;">(required)</span></label>
                             <input type="text" class="form-control" name="notelp" id="notelp" autofocus
