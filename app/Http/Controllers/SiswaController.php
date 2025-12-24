@@ -14,13 +14,28 @@ class SiswaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
-        $siswa = Siswa::all();
-        return view('siswa.index', compact('siswa'));
+
+        // query dasar
+        $query = Siswa::query();
+
+        // jika ada filter kelas, gunakan kolom email sebagai kelas
+        if ($request->filled('kelas')) {
+            $query->where('email', $request->kelas);
+        }
+
+        $siswa = $query->get();
+
+        // daftar kelas unik dari kolom email untuk dropdown filter
+        $listKelas = Siswa::whereNotNull('email')
+            ->distinct()
+            ->pluck('email');
+
+        return view('siswa.index', compact('siswa', 'listKelas'));
     }
 
     /**
@@ -30,7 +45,7 @@ class SiswaController extends Controller
      */
     public function create()
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
         return view('siswa.create');
@@ -44,18 +59,19 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
+
         $request->validate([
-            'nama' => 'required',
-            'email' => 'nullable',
+            'nama'   => 'required',
+            'email'  => 'nullable',
             'alamat' => 'nullable'
         ]);
+
         Siswa::create($request->all());
         Alert::success('Success', 'Data berhasil ditambah');
         return redirect('/siswa');
-        // dd($request);
     }
 
     /**
@@ -77,11 +93,10 @@ class SiswaController extends Controller
      */
     public function edit($id_siswa)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
         $siswa = Siswa::findOrFail($id_siswa);
-        // dd($siswa);
         return view('siswa.show', compact('siswa'));
     }
 
@@ -89,16 +104,15 @@ class SiswaController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $id_siswa
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id_siswa)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
         $siswa = Siswa::findOrFail($id_siswa);
-        // dd($siswa);
         $siswa->update($request->all());
         Alert::success('Success', 'Data berhasil Di Update');
         return redirect('/siswa');
@@ -107,17 +121,16 @@ class SiswaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $id_siswa
      * @return \Illuminate\Http\Response
      */
     public function destroy($id_siswa)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
         $siswa = Siswa::findOrFail($id_siswa);
-        // dd($siswa->with('absensis'));
-        $siswa->delete($siswa);
+        $siswa->delete();
         Alert::success('Success', 'Data berhasil dihapus');
         return back();
     }

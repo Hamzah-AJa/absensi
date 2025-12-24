@@ -4,8 +4,34 @@
 <title> Absensi | Report </title>
 <style>
     @media print{
-       .sticky-footer,.waktu,.heder,.btn{display: none;}
+        .sticky-footer,.waktu,.heder,.btn{display: none;}
         #navbar{display: none}
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+
+    .select-wrapper select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 2rem;
+    }
+
+    .select-wrapper::after {
+        content: '\25BC'; /* ▼ */
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        pointer-events: none;
+        transition: transform 0.2s ease;
+    }
+
+    .select-wrapper.open::after {
+        transform: translateY(-50%) rotate(180deg);
     }
 </style>
 @endsection
@@ -14,67 +40,73 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 waktu mb-5 mt-2">
-                    <form action="/report/cari" method="get">
-                        <label>Dari Tanggal : </label>
-                        <td class="btn">
-                            <input type="date" name="from" class="form-control" required="required"
-                                   value="{{ request('from', $from) }}">
-                        </td>
-                </div>
 
-                <div class="col-md-3 waktu mb-5 mt-2">
-                    <label> Sampai Tanggal : </label>
-                    <td class="btn">
-                        <input type="date" name="to" required="required" class="form-control"
+            <form action="/report/cari" method="get">
+                <div class="row align-items-end">
+
+                    <div class="col-md-3 waktu mb-4">
+                        <label>Dari Tanggal :</label>
+                        <input type="date" name="from" class="form-control" required
+                               value="{{ request('from', $from) }}">
+                    </div>
+
+                    <div class="col-md-3 waktu mb-4">
+                        <label>Sampai Tanggal :</label>
+                        <input type="date" name="to" class="form-control" required
                                value="{{ request('to', $to) }}">
-                    </td>
-                </div>
+                    </div>
 
-                {{-- FILTER KELAS --}}
-                <div class="col-md-3 waktu mb-5 mt-2">
-                    <label> Kelas : </label>
-                    <td class="btn">
-                        <select name="kelas" class="form-control">
-                            <option value="">Semua Kelas</option>
-                            @foreach ($listKelas as $kelas)
-                                <option value="{{ $kelas }}"
-                                    {{ request('kelas') == $kelas ? 'selected' : '' }}>
-                                    {{ $kelas }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </td>
-                </div>
+                    {{-- FILTER KELAS dengan panah --}}
+                    <div class="col-md-2 waktu mb-4">
+                        <label>Kelas :</label>
+                        <div class="select-wrapper" id="kelas-wrapper-report">
+                            <select name="kelas" class="form-control" id="kelas-select-report">
+                                <option value="">Semua Kelas</option>
+                                @foreach ($listKelas as $kelas)
+                                    <option value="{{ $kelas }}"
+                                        {{ request('kelas') == $kelas ? 'selected' : '' }}>
+                                        {{ $kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
 
-                <div class="col-md-3 waktu ">
-                    <input type="submit" name="filter" value="Filter"
-                           style="margin-top: 33px"
-                           class="btn waktu ml-4 btn-primary btn-fill pull-right">
-                </div>
+                    {{-- TOMBOL FILTER --}}
+                    <div class="col-md-2 waktu mb-4">
+                        <button type="submit"
+                                name="filter"
+                                class="btn btn-primary w-100"
+                                style="margin-top: 25px">
+                            Filter
+                        </button>
+                    </div>
 
-                <div class="col-md-3 waktu">
-                    <a href=""
-                       class="waktu btn btn-outline-success"
-                       style="margin-left: 120px;margin-top:32px"
-                       onclick="window.print()"> Print laporan </a>
+                    {{-- TOMBOL PRINT --}}
+                    <div class="col-md-2 waktu mb-4">
+                        <button type="button"
+                                class="btn btn-outline-success w-100"
+                                style="margin-top: 25px"
+                                onclick="window.print()">
+                            Print
+                        </button>
+                    </div>
+
                 </div>
-            </div>
             </form>
 
+            {{-- HEADER --}}
             <div class="mt-2">
-                <h3 style="text-align : center;margin-bottom:30px;"> Laporan Absensi </h3>
-                <h6> Dari Tanggal : {{ $from }}</h6>
-                <h6> Sampai Tanggal : {{ $to }}</h6>
+                <h3 class="text-center mb-4">Laporan Absensi</h3>
+                <h6>Dari Tanggal : {{ $from }}</h6>
+                <h6>Sampai Tanggal : {{ $to }}</h6>
                 @if(request('kelas'))
-                    <h6> Kelas : {{ request('kelas') }}</h6>
+                    <h6>Kelas : {{ request('kelas') }}</h6>
                 @endif
             </div>
 
-            <div class="MyTable">
-                <table style="margin-top: 20px" class="table table-bordered">
-            </div>
+            {{-- TABEL --}}
+            <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -88,63 +120,41 @@
                 </thead>
                 <tbody>
                     @php $no = 1; @endphp
-                    @if ($m)
-                        @foreach ($m as $a)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $a->nama }}</td>
-                                {{-- kelas diambil dari kolom email pada tabel siswas --}}
-                                <td>{{ $a->email ?? '-' }}</td>
+                    @foreach ($m as $a)
+                        <tr>
+                            <td>{{ $no++ }}</td>
+                            <td>{{ $a->nama }}</td>
+                            <td>{{ $a->email ?? '-' }}</td>
 
-                                {{-- Hadir --}}
-                                <td>
-                                    @php
-                                        $hadir = $a->absensis
-                                            ->where('keterangan', 'Hadir')
-                                            ->whereBetween('tanggal', [$from, $to])
-                                            ->count();
-                                    @endphp
-                                    {{ $hadir == 0 ? '-' : $hadir }}
-                                </td>
-
-                                {{-- Ijin --}}
-                                <td>
-                                    @php
-                                        $ijin = $a->absensis
-                                            ->where('keterangan', 'Ijin')
-                                            ->whereBetween('tanggal', [$from, $to])
-                                            ->count();
-                                    @endphp
-                                    {{ $ijin == 0 ? '-' : $ijin }}
-                                </td>
-
-                                {{-- Sakit --}}
-                                <td>
-                                    @php
-                                        $sakit = $a->absensis
-                                            ->where('keterangan', 'Sakit')
-                                            ->whereBetween('tanggal', [$from, $to])
-                                            ->count();
-                                    @endphp
-                                    {{ $sakit == 0 ? '-' : $sakit }}
-                                </td>
-
-                                {{-- Alfa --}}
-                                <td>
-                                    @php
-                                        $alfa = $a->absensis
-                                            ->where('keterangan', 'Alfa')
-                                            ->whereBetween('tanggal', [$from, $to])
-                                            ->count();
-                                    @endphp
-                                    {{ $alfa == 0 ? '-' : $alfa }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
+                            <td>{{ $a->absensis->where('keterangan','Hadir')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                            <td>{{ $a->absensis->where('keterangan','Ijin')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                            <td>{{ $a->absensis->where('keterangan','Sakit')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                            <td>{{ $a->absensis->where('keterangan','Alfa')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
+
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectReport = document.getElementById('kelas-select-report');
+        const wrapperReport = document.getElementById('kelas-wrapper-report');
+
+        if (selectReport && wrapperReport) {
+            selectReport.addEventListener('focus', function () {
+                wrapperReport.classList.add('open');
+            });
+            selectReport.addEventListener('blur', function () {
+                wrapperReport.classList.remove('open');
+            });
+            selectReport.addEventListener('click', function () {
+                wrapperReport.classList.toggle('open');
+            });
+        }
+    });
+</script>
 @endsection

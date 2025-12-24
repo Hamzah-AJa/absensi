@@ -14,16 +14,42 @@ class AbsenController extends Controller
     /**
      * Dashboard.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (!Auth::check()) {
             return redirect('/');
         }
 
-        $absens   = Absensi::orderBy('id_absensi', 'desc')->get();
-        $absennow = Absensi::where('tanggal', Carbon::now()->format('Y/m/d'))->get();
+        // daftar kelas unik dari siswas.email
+        $listKelas = Siswa::whereNotNull('email')
+            ->distinct()
+            ->pluck('email');
 
-        return view('index', compact('absens', 'absennow'));
+        // query absen total
+        $absenQuery = Absensi::with('siswa')
+            ->orderBy('id_absensi', 'desc');
+
+        // query absen hari ini
+        $absenNowQuery = Absensi::with('siswa')
+            ->where('tanggal', Carbon::now()->format('Y/m/d'));
+
+        // jika ada filter kelas (kelas = kolom email di tabel siswas)
+        if ($request->filled('kelas')) {
+            $kelas = $request->kelas;
+
+            $absenQuery->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('email', $kelas);
+            });
+
+            $absenNowQuery->whereHas('siswa', function ($q) use ($kelas) {
+                $q->where('email', $kelas);
+            });
+        }
+
+        $absens   = $absenQuery->get();
+        $absennow = $absenNowQuery->get();
+
+        return view('index', compact('absens', 'absennow', 'listKelas'));
     }
 
     /**
@@ -144,7 +170,6 @@ class AbsenController extends Controller
 
     /**
      * Report default (tanpa filter tanggal request).
-     * Default: hari ini sampai 1 minggu ke depan.
      */
     public function report()
     {
@@ -152,14 +177,11 @@ class AbsenController extends Controller
             return redirect('/');
         }
 
-        // default: hari ini s.d. 1 minggu ke depan
         $from = Carbon::today()->format('Y-m-d');
         $to   = Carbon::today()->addWeek()->format('Y-m-d');
 
-        // semua siswa + relasi absensi
         $m = Siswa::with('absensis')->get();
 
-        // daftar kelas unik dari kolom email
         $listKelas = Siswa::whereNotNull('email')
             ->distinct()
             ->pluck('email');
@@ -176,21 +198,17 @@ class AbsenController extends Controller
             return redirect('/');
         }
 
-        // jika tidak diisi di form, pakai default (hari ini s.d. 1 minggu ke depan)
-        $from = $request->from ?: Carbon::today()->format('Y-m-d');
-        $to   = $request->to   ?: Carbon::today()->addWeek()->format('Y-m-d');
+        $from = $request->from ?? Carbon::today()->format('Y-m-d');
+        $to   = $request->to   ?? Carbon::today()->addWeek()->format('Y-m-d');
 
-        // query siswa + relasi absensi
         $query = Siswa::with('absensis');
 
-        // filter kelas pakai kolom email
         if ($request->filled('kelas')) {
             $query->where('email', $request->kelas);
         }
 
         $m = $query->get();
 
-        // daftar kelas untuk dropdown
         $listKelas = Siswa::whereNotNull('email')
             ->distinct()
             ->pluck('email');

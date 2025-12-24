@@ -1,159 +1,130 @@
 @extends('layout.main')
 
 @section('title')
-<title> Absensi | Report </title>
-<style>
-    @media print{
-        .sticky-footer,.waktu,.heder,.btn{display: none;}
-        #navbar{display: none}
-    }
-</style>
+    <title>Absensi | Absens</title>
 @endsection
 
 @section('content')
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-body">
-
-            {{-- FORM FILTER --}}
-            <form action="/report/cari" method="get" class="mb-4">
-                <div class="row g-3 align-items-end">
-
-                    {{-- Dari Tanggal --}}
-                    <div class="col-md-3 waktu">
-                        <label class="form-label mb-1">Dari Tanggal</label>
-                        <input
-                            type="date"
-                            name="from"
-                            class="form-control"
-                            required
-                            value="{{ request('from', $from) }}"
-                        >
-                    </div>
-
-                    {{-- Sampai Tanggal --}}
-                    <div class="col-md-3 waktu">
-                        <label class="form-label mb-1">Sampai Tanggal</label>
-                        <input
-                            type="date"
-                            name="to"
-                            class="form-control"
-                            required
-                            value="{{ request('to', $to) }}"
-                        >
-                    </div>
-
-                    {{-- Kelas --}}
-                    <div class="col-md-2 waktu">
-                        <label class="form-label mb-1">Kelas</label>
-                        <select name="kelas" class="form-control">
-                            <option value="">Semua Kelas</option>
-                            @foreach ($listKelas as $kelas)
-                                <option value="{{ $kelas }}"
-                                    {{ request('kelas') == $kelas ? 'selected' : '' }}>
-                                    {{ $kelas }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Tombol Filter --}}
-                    <div class="col-md-2 waktu">
-                        <button
-                            type="submit"
-                            name="filter"
-                            class="btn btn-primary w-100"
-                            style="margin-top: 30px"
-                        >
-                            Filter
-                        </button>
-                    </div>
-
-                    {{-- Tombol Print --}}
-                    <div class="col-md-2 waktu">
-                        <button
-                            type="button"
-                            class="btn btn-outline-success w-100"
-                            onclick="window.print()"
-                            style="margin-top: 30px"
-                        >
-                            Print
-                        </button>
-                    </div>
-
-                </div>
-            </form>
-
-            {{-- HEADER LAPORAN --}}
-            <div class="mt-2">
-                <h3 class="text-center mb-4">Laporan Absensi</h3>
-                <h6>Dari Tanggal : {{ $from }}</h6>
-                <h6>Sampai Tanggal : {{ $to }}</h6>
-                @if(request('kelas'))
-                    <h6>Kelas : {{ request('kelas') }}</h6>
-                @endif
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                Absen {{ $tgl->format('D d/m/Y') }}
             </div>
+            <div class="card-body">
+                <form action="/absen/post" method="POST">
+                    @csrf
 
-            {{-- TABEL LAPORAN --}}
-            <div class="mt-3">
-                <table class="table table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Nama</th>
-                            <th>Kelas</th>
-                            <th>Hadir</th>
-                            <th>Ijin</th>
-                            <th>Sakit</th>
-                            <th>Alfa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php $no = 1; @endphp
-                        @foreach ($m as $a)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $a->nama }}</td>
-                                <td>{{ $a->email ?? '-' }}</td>
-
-                                <td>
-                                    @php
-                                        $hadir = $a->absensis->where('keterangan','Hadir')
-                                            ->whereBetween('tanggal', [$from, $to])->count();
-                                    @endphp
-                                    {{ $hadir == 0 ? '-' : $hadir }}
-                                </td>
-
-                                <td>
-                                    @php
-                                        $ijin = $a->absensis->where('keterangan','Ijin')
-                                            ->whereBetween('tanggal', [$from, $to])->count();
-                                    @endphp
-                                    {{ $ijin == 0 ? '-' : $ijin }}
-                                </td>
-
-                                <td>
-                                    @php
-                                        $sakit = $a->absensis->where('keterangan','Sakit')
-                                            ->whereBetween('tanggal', [$from, $to])->count();
-                                    @endphp
-                                    {{ $sakit == 0 ? '-' : $sakit }}
-                                </td>
-
-                                <td>
-                                    @php
-                                        $alfa = $a->absensis->where('keterangan','Alfa')
-                                            ->whereBetween('tanggal', [$from, $to])->count();
-                                    @endphp
-                                    {{ $alfa == 0 ? '-' : $alfa }}
-                                </td>
-                            </tr>
+                    {{-- FILTER KELAS --}}
+                    <label for="filter_kelas" class="mt-2 form-label">
+                        Filter Kelas
+                    </label>
+                    <select id="filter_kelas" class="form-select">
+                        <option value="">Semua Kelas</option>
+                        @php
+                            // ambil daftar kelas unik dari koleksi $siswa (kolom email)
+                            $kelasUnik = $siswa->pluck('email')->filter()->unique();
+                        @endphp
+                        @foreach ($kelasUnik as $k)
+                            <option value="{{ $k }}">{{ $k }}</option>
                         @endforeach
-                    </tbody>
-                </table>
-            </div>
+                    </select>
 
+                    {{-- NAMA SISWA --}}
+                    <label for="siswa" class="mt-2 form-label">
+                        Nama Siswa <span style="font-style: italic;">(required)</span>
+                    </label>
+                    <select class="form-select" name="id_siswa" id="siswa" required>
+                        @foreach ($siswa as $s)
+                            {{-- data-kelas berisi email (kelas) --}}
+                            <option value="{{ $s->id_siswa }}"
+                                    data-kelas="{{ $s->email }}"
+                                    data-kelas-filter="{{ $s->email }}">
+                                {{ $s->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    {{-- KELAS (otomatis) --}}
+                    <label for="kelas" class="mt-2 form-label">
+                        Kelas <span style="font-style: italic;">(otomatis)</span>
+                    </label>
+                    <input type="text" id="kelas" class="form-control mt-2" readonly>
+
+                    {{-- KETERANGAN --}}
+                    <label for="Ket" class="mt-2 form-label">
+                        Keterangan <span style="font-style: italic;">(required)</span>
+                    </label>
+                    <select class="form-select" name="keterangan" id="Ket" required>
+                        <option value="">Pilih Keterangan</option>
+                        <option value="Hadir">Hadir</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Ijin">Ijin</option>
+                        <option value="Alfa">Alfa</option>
+                    </select>
+
+                    {{-- TANGGAL --}}
+                    <label for="tanggal" class="mt-2 form-label">
+                        Tanggal <span style="font-style: italic;">(required)</span>
+                    </label>
+                    <input
+                        type="date"
+                        name="tanggal"
+                        class="mt-2 form-control"
+                        id="tanggal"
+                        value="{{ $tgl->format('Y-m-d') }}"
+                        required
+                    >
+
+                    <div class="mr-2">
+                        <button class="float-right btn btn-dark mt-4" type="submit">SUBMIT</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+
+    {{-- script untuk isi kelas otomatis + filter kelas --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectSiswa   = document.getElementById('siswa');
+            const inputKelas    = document.getElementById('kelas');
+            const filterKelas   = document.getElementById('filter_kelas');
+
+            const allOptions = Array.from(selectSiswa.options);
+
+            function updateKelas() {
+                const opt = selectSiswa.options[selectSiswa.selectedIndex];
+                inputKelas.value = opt ? (opt.getAttribute('data-kelas') || '') : '';
+            }
+
+            function applyFilterKelas() {
+                const kelas = filterKelas.value;
+
+                // hapus semua option
+                selectSiswa.innerHTML = '';
+
+                // filter dari list awal
+                const filtered = allOptions.filter(opt => {
+                    const k = opt.getAttribute('data-kelas-filter') || '';
+                    return !kelas || k === kelas;
+                });
+
+                filtered.forEach(opt => selectSiswa.appendChild(opt));
+
+                // pilih option pertama jika ada
+                if (selectSiswa.options.length > 0) {
+                    selectSiswa.selectedIndex = 0;
+                }
+
+                updateKelas();
+            }
+
+            // event
+            selectSiswa.addEventListener('change', updateKelas);
+            filterKelas.addEventListener('change', applyFilterKelas);
+
+            // inisialisasi awal
+            applyFilterKelas();
+        });
+    </script>
 @endsection
