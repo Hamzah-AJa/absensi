@@ -67,9 +67,6 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
-
-
                 {{-- Absen Hari Ini --}}
                 <div class="card">
                     <div class="card-header">
@@ -174,7 +171,6 @@
                         </table>
 
                     </div>
-=======
 
             {{-- Absen Total --}}
             <div class="card" style="margin-top: 50px">
@@ -224,8 +220,6 @@
                         </tbody>
                     </table>
 
-
->>>>>>> c55e2148d20b43a903fbc2dd4972ae52d3ffa8be
                 </div>
             </div>
         </div>
