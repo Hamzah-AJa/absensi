@@ -7,165 +7,194 @@ use App\Models\Siswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class AbsenController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Dashboard.
      */
-    public function index(){
-        if(!Auth::check()){
-            return redirect('/');
-        }
-        $absens = Absensi::orderby('id_absensi','desc')->get();
-        $absennow = Absensi::where('tanggal', Carbon::now()->format('Y/m/d'))->get();
-        return view('index', compact('absens','absennow'));
-    }
-    public function absen()
+    public function index()
     {
-
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
-        $today = Carbon::now()->format('Y/m/d');
-        $loop = [];
-        $s = Siswa::rightJoin('absensis', 'siswas.id_siswa', '=', 'absensis.id_siswa')->where('tanggal', $today)->get();
-        foreach($s as $ss => $value){
-            $loop[] = $value->nama;
-        }
-        $siswa = Siswa::whereNotIn('nama',$loop)->get();
-        $tgl = Carbon::now();
-    
-        return view('absen', compact('siswa', 'tgl', 's'));
+
+        $absens   = Absensi::orderBy('id_absensi', 'desc')->get();
+        $absennow = Absensi::where('tanggal', Carbon::now()->format('Y/m/d'))->get();
+
+        return view('index', compact('absens', 'absennow'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Halaman form absen.
      */
+    public function absen()
+    {
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+
+        $today = Carbon::now()->format('Y/m/d');
+        $loop  = [];
+
+        $s = Siswa::rightJoin('absensis', 'siswas.id_siswa', '=', 'absensis.id_siswa')
+            ->where('tanggal', $today)
+            ->get();
+
+        foreach ($s as $value) {
+            $loop[] = $value->nama;
+        }
+
+        $siswa = Siswa::whereNotIn('nama', $loop)->get();
+        $tgl   = Carbon::now();
+
+        return view('absen', compact('siswa', 'tgl', 's'));
+    }
+
     public function create()
     {
         //
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Simpan absen baru.
      */
     public function post(Request $request)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
-        // dd($request);
+
         $request->validate([
-            'id_siswa' => 'required',
+            'id_siswa'   => 'required',
             'keterangan' => 'required',
-            'tanggal' => 'required'
+            'tanggal'    => 'required',
         ]);
+
         Absensi::create($request->all());
-        Alert::success('Success', 'Data berhasil Di BUat');
-        return redirect('/');
+
+        Alert::success('Success', 'Data berhasil dibuat');
+
+        // kembali ke halaman form absen lagi
+        return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Edit absen.
      */
     public function edit($id_absensi)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
+
         $today = Carbon::now()->format('Y/m/d');
-        $loop = [];
-        $s = Siswa::rightJoin('absensis', 'siswas.id_siswa', '=', 'absensis.id_siswa')->where('tanggal', $today)->get();
-        foreach($s as $ss => $value){
+        $loop  = [];
+
+        $s = Siswa::rightJoin('absensis', 'siswas.id_siswa', '=', 'absensis.id_siswa')
+            ->where('tanggal', $today)
+            ->get();
+
+        foreach ($s as $value) {
             $loop[] = $value->nama;
         }
-        $siswa = Siswa::whereNotIn('nama',$loop)->get();
-        $tgl = Carbon::now();
-        $absen = Absensi::where('id_absensi',$id_absensi)->first();
-        // dd($absen->id_siswa);
-         return view('edit', compact('absen', 'tgl','siswa'));
+
+        $siswa = Siswa::whereNotIn('nama', $loop)->get();
+        $tgl   = Carbon::now();
+        $absen = Absensi::where('id_absensi', $id_absensi)->first();
+
+        return view('edit', compact('absen', 'tgl', 'siswa'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update absen.
      */
     public function update(Request $request, $id_absensi)
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect('/');
         }
+
         $absen = Absensi::findOrFail($id_absensi);
-        // dd($absen);
         $absen->update($request->all());
-        Alert::success('Success', 'Data berhasil Di Update');
+
+        Alert::success('Success', 'Data berhasil di-update');
+
         return redirect('/dashboard');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Hapus absen.
      */
     public function destroy($id_absensi)
     {
-        $absen = Absensi::where('id_absensi',$id_absensi)->first();
-        // dd($absen);
-        $absen->delete($absen);
+        $absen = Absensi::where('id_absensi', $id_absensi)->first();
+        $absen->delete();
+
         Alert::success('Success', 'Data berhasil dihapus');
+
         return back();
     }
 
-    public function report(){
-        if(!Auth::check()){
+    /**
+     * Report default (tanpa filter tanggal request).
+     * Default: hari ini sampai 1 minggu ke depan.
+     */
+    public function report()
+    {
+        if (!Auth::check()) {
             return redirect('/');
         }
-        $m = Siswa::get();
-        $from = '2022-06-01';
-        $to = '2023-06-01';
-        $absen = Absensi::get();
-        return view('report', compact('m','from','to'));
+
+        // default: hari ini s.d. 1 minggu ke depan
+        $from = Carbon::today()->format('Y-m-d');
+        $to   = Carbon::today()->addWeek()->format('Y-m-d');
+
+        // semua siswa + relasi absensi
+        $m = Siswa::with('absensis')->get();
+
+        // daftar kelas unik dari kolom email
+        $listKelas = Siswa::whereNotNull('email')
+            ->distinct()
+            ->pluck('email');
+
+        return view('report', compact('m', 'from', 'to', 'listKelas'));
     }
-    public function reportsearch(Request $request){
-        if(!Auth::check()){
+
+    /**
+     * Report dengan filter tanggal + kelas.
+     */
+    public function reportsearch(Request $request)
+    {
+        if (!Auth::check()) {
             return redirect('/');
         }
-        $from = $request->from;
-        $to = $request->to;
-        // dd($cari);
-        // $absen = Absensi::->where('id_siswa', $id_siswa)->whereBetween('tanggal', [$from,$to])->get();
-        $m = Siswa::get();
-        // $from = '2022-10-05';
-        // $to = Carbon::now()->format('Y/m/d');
-        $absen = Absensi::get();
-        return view('report', compact('m', 'absen', 'from', 'to'));
+
+        // jika tidak diisi di form, pakai default (hari ini s.d. 1 minggu ke depan)
+        $from = $request->from ?: Carbon::today()->format('Y-m-d');
+        $to   = $request->to   ?: Carbon::today()->addWeek()->format('Y-m-d');
+
+        // query siswa + relasi absensi
+        $query = Siswa::with('absensis');
+
+        // filter kelas pakai kolom email
+        if ($request->filled('kelas')) {
+            $query->where('email', $request->kelas);
+        }
+
+        $m = $query->get();
+
+        // daftar kelas untuk dropdown
+        $listKelas = Siswa::whereNotNull('email')
+            ->distinct()
+            ->pluck('email');
+
+        return view('report', compact('m', 'from', 'to', 'listKelas'));
     }
 }

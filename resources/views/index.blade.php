@@ -1,10 +1,8 @@
 @extends('layout.main')
 
-
 @section('title')
     <title>Absensi | Dashboard</title>
 @endsection
-
 
 @section('content')
     <div class="container">
@@ -29,6 +27,8 @@
                         }
                     }
                 @endphp
+
+                {{-- Kartu ringkasan --}}
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card card-stat bg-success text-white shadow-sm">
@@ -84,6 +84,7 @@
                                     <th>ID</th>
                                     <th>Tanggal</th>
                                     <th>Nama</th>
+                                    <th>Kelas</th> {{-- baru --}}
                                     <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
@@ -96,6 +97,8 @@
                                         <td>{{ $a->tanggal->isoformat('D/M/YYYY') }}</td>
                                         {{-- aman jika relasi siswa null --}}
                                         <td>{{ optional($a->siswa)->nama ?? '-' }}</td>
+                                        {{-- Kelas diambil dari kolom email pada tabel siswas --}}
+                                        <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                         <td>
                                             @if ($a->keterangan == 'Sakit')
                                                 <span class="badge bg-warning">{{ $a->keterangan }}</span>
@@ -110,8 +113,8 @@
                                                 <i class="fa fa-pen" aria-hidden="true"></i>
                                             </a>
                                             <a href="/absen/{{ $a->id_absensi }}/delete"
-                                                onclick="return confirm('Apakah kamu yakin ingin menghapus data?')"
-                                                class="ms-2 btn btn-danger text-white">
+                                               onclick="return confirm('Apakah kamu yakin ingin menghapus data?')"
+                                               class="ms-2 btn btn-danger text-white">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </td>
@@ -134,6 +137,7 @@
                                     <th>ID</th>
                                     <th>Tanggal</th>
                                     <th>Nama</th>
+                                    <th>Kelas</th> {{-- baru --}}
                                     <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
@@ -146,6 +150,8 @@
                                         <td>{{ $a->tanggal->isoformat('D/M/YYYY') }}</td>
                                         {{-- aman jika relasi siswa null --}}
                                         <td>{{ optional($a->siswa)->nama ?? '-' }}</td>
+                                        {{-- Kelas dari kolom email --}}
+                                        <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                         <td>
                                             @if ($a->keterangan == 'Sakit')
                                                 <span class="badge bg-warning">{{ $a->keterangan }}</span>
@@ -160,8 +166,8 @@
                                                 <i class="fa fa-pen" aria-hidden="true"></i>
                                             </a>
                                             <a href="/absen/{{ $a->id_absensi }}/delete"
-                                                onclick="return confirm('Apakah kamu yakin ingin menghapus data?')"
-                                                class="ms-2 btn btn-danger text-white">
+                                               onclick="return confirm('Apakah kamu yakin ingin menghapus data?')"
+                                               class="ms-2 btn btn-danger text-white">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </td>
@@ -171,6 +177,11 @@
                         </table>
 
                     </div>
+<<<<<<< HEAD
+=======
+                </div>
+            </div>
+>>>>>>> 83e80434da9da719e56f6bf036eed78d15e7b730
         </div>
     </div>
 @endsection
