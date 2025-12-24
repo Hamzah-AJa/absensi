@@ -4,24 +4,24 @@
 <title> Absensi | Report </title>
 <style>
     @media print{
-       .sticky-footer,.waktu,.heder,.btn{display: none;}
+        .sticky-footer,.waktu,.heder,.btn{display: none;}
         #navbar{display: none}
     }
 </style>
 @endsection
 
 @section('content')
-<div class="container">
+<div class="container mt-4">
     <div class="card">
         <div class="card-body">
 
             {{-- FORM FILTER --}}
             <form action="/report/cari" method="get" class="mb-4">
-                <div class="row align-items-end">
+                <div class="row g-3 align-items-end">
 
                     {{-- Dari Tanggal --}}
-                    <div class="col-md-3 mb-3 waktu">
-                        <label class="form-label">Dari Tanggal :</label>
+                    <div class="col-md-3 waktu">
+                        <label class="form-label mb-1">Dari Tanggal</label>
                         <input
                             type="date"
                             name="from"
@@ -32,8 +32,8 @@
                     </div>
 
                     {{-- Sampai Tanggal --}}
-                    <div class="col-md-3 mb-3 waktu">
-                        <label class="form-label">Sampai Tanggal :</label>
+                    <div class="col-md-3 waktu">
+                        <label class="form-label mb-1">Sampai Tanggal</label>
                         <input
                             type="date"
                             name="to"
@@ -43,9 +43,9 @@
                         >
                     </div>
 
-                    {{-- Kelas (dari kolom email) --}}
-                    <div class="col-md-3 mb-3 waktu">
-                        <label class="form-label">Kelas :</label>
+                    {{-- Kelas --}}
+                    <div class="col-md-2 waktu">
+                        <label class="form-label mb-1">Kelas</label>
                         <select name="kelas" class="form-control">
                             <option value="">Semua Kelas</option>
                             @foreach ($listKelas as $kelas)
@@ -58,24 +58,29 @@
                     </div>
 
                     {{-- Tombol Filter --}}
-                    <div class="col-md-3 mb-3 waktu text-md-right text-start">
-                        <button type="submit"
-                                name="filter"
-                                class="btn btn-primary w-100">
+                    <div class="col-md-2 waktu">
+                        <button
+                            type="submit"
+                            name="filter"
+                            class="btn btn-primary w-100"
+                            style="margin-top: 30px"
+                        >
                             Filter
                         </button>
                     </div>
-                </div>
 
-                {{-- Tombol Print di baris sendiri --}}
-                <div class="row">
-                    <div class="col-md-3 mb-3 waktu">
-                        <button type="button"
-                                class="btn btn-outline-success w-100"
-                                onclick="window.print()">
-                            Print laporan
+                    {{-- Tombol Print --}}
+                    <div class="col-md-2 waktu">
+                        <button
+                            type="button"
+                            class="btn btn-outline-success w-100"
+                            onclick="window.print()"
+                            style="margin-top: 30px"
+                        >
+                            Print
                         </button>
                     </div>
+
                 </div>
             </form>
 
@@ -90,9 +95,9 @@
             </div>
 
             {{-- TABEL LAPORAN --}}
-            <div class="MyTable">
-                <table class="table table-bordered mt-3">
-                    <thead>
+            <div class="mt-3">
+                <table class="table table-bordered">
+                    <thead class="table-light">
                         <tr>
                             <th>#</th>
                             <th>Nama</th>
@@ -105,60 +110,45 @@
                     </thead>
                     <tbody>
                         @php $no = 1; @endphp
-                        @if ($m)
-                            @foreach ($m as $a)
-                                <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $a->nama }}</td>
-                                    {{-- Kelas diambil dari kolom email pada tabel siswas --}}
-                                    <td>{{ $a->email ?? '-' }}</td>
+                        @foreach ($m as $a)
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $a->nama }}</td>
+                                <td>{{ $a->email ?? '-' }}</td>
 
-                                    {{-- Hadir --}}
-                                    <td>
-                                        @php
-                                            $hadir = $a->absensis
-                                                ->where('keterangan', 'Hadir')
-                                                ->whereBetween('tanggal', [$from, $to])
-                                                ->count();
-                                        @endphp
-                                        {{ $hadir == 0 ? '-' : $hadir }}
-                                    </td>
+                                <td>
+                                    @php
+                                        $hadir = $a->absensis->where('keterangan','Hadir')
+                                            ->whereBetween('tanggal', [$from, $to])->count();
+                                    @endphp
+                                    {{ $hadir == 0 ? '-' : $hadir }}
+                                </td>
 
-                                    {{-- Ijin --}}
-                                    <td>
-                                        @php
-                                            $ijin = $a->absensis
-                                                ->where('keterangan', 'Ijin')
-                                                ->whereBetween('tanggal', [$from, $to])
-                                                ->count();
-                                        @endphp
-                                        {{ $ijin == 0 ? '-' : $ijin }}
-                                    </td>
+                                <td>
+                                    @php
+                                        $ijin = $a->absensis->where('keterangan','Ijin')
+                                            ->whereBetween('tanggal', [$from, $to])->count();
+                                    @endphp
+                                    {{ $ijin == 0 ? '-' : $ijin }}
+                                </td>
 
-                                    {{-- Sakit --}}
-                                    <td>
-                                        @php
-                                            $sakit = $a->absensis
-                                                ->where('keterangan', 'Sakit')
-                                                ->whereBetween('tanggal', [$from, $to])
-                                                ->count();
-                                        @endphp
-                                        {{ $sakit == 0 ? '-' : $sakit }}
-                                    </td>
+                                <td>
+                                    @php
+                                        $sakit = $a->absensis->where('keterangan','Sakit')
+                                            ->whereBetween('tanggal', [$from, $to])->count();
+                                    @endphp
+                                    {{ $sakit == 0 ? '-' : $sakit }}
+                                </td>
 
-                                    {{-- Alfa --}}
-                                    <td>
-                                        @php
-                                            $alfa = $a->absensis
-                                                ->where('keterangan', 'Alfa')
-                                                ->whereBetween('tanggal', [$from, $to])
-                                                ->count();
-                                        @endphp
-                                        {{ $alfa == 0 ? '-' : $alfa }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
+                                <td>
+                                    @php
+                                        $alfa = $a->absensis->where('keterangan','Alfa')
+                                            ->whereBetween('tanggal', [$from, $to])->count();
+                                    @endphp
+                                    {{ $alfa == 0 ? '-' : $alfa }}
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
