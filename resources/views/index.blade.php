@@ -177,11 +177,8 @@
                         </table>
 
                     </div>
-<<<<<<< HEAD
-=======
                 </div>
             </div>
->>>>>>> 83e80434da9da719e56f6bf036eed78d15e7b730
         </div>
     </div>
 @endsection
