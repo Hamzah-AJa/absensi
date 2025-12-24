@@ -44,12 +44,6 @@
                         @endforeach
                     </select>
 
-                    {{-- KELAS (otomatis) --}}
-                    <label for="kelas" class="mt-2 form-label">
-                        Kelas <span style="font-style: italic;">(otomatis)</span>
-                    </label>
-                    <input type="text" id="kelas" class="form-control mt-2" readonly>
-
                     {{-- KETERANGAN --}}
                     <label for="Ket" class="mt-2 form-label">
                         Keterangan <span style="font-style: italic;">(required)</span>

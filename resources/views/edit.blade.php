@@ -32,12 +32,12 @@
                     Keterangan <span style="font-style: italic;">(required)</span>
                 </label>
                 <select class="form-select" name="keterangan" id="Ket">
-                    <option value="{{ $absen->keterangan }}">{{ $absen->keterangan }}</option>
-                    <option value="Hadir">Hadir</option>
-                    <option value="Sakit">Sakit</option>
-                    <option value="Ijin">Ijin</option>
-                    <option value="Alfa">Alfa</option>
+                    <option value="Hadir" {{ $absen->keterangan == 'Hadir' ? 'selected' : '' }}>Hadir</option>
+                    <option value="Sakit" {{ $absen->keterangan == 'Sakit' ? 'selected' : '' }}>Sakit</option>
+                    <option value="Ijin"  {{ $absen->keterangan == 'Ijin'  ? 'selected' : '' }}>Ijin</option>
+                    <option value="Alfa"  {{ $absen->keterangan == 'Alfa'  ? 'selected' : '' }}>Alfa</option>
                 </select>
+
 
                 {{-- Tanggal bisa dipilih --}}
                 <label for="tanggal" class="mt-2 form-label">

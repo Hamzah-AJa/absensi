@@ -20,7 +20,7 @@
     }
 
     .select-wrapper::after {
-        content: '\25BC'; /* ▼ */
+        content: '\25BC';
         position: absolute;
         right: 10px;
         top: 50%;
@@ -33,6 +33,18 @@
     .select-wrapper.open::after {
         transform: translateY(-50%) rotate(180deg);
     }
+
+    /* KHUSUS PDF – TANPA MENGUBAH TAMPILAN LAYAR */
+    #pdfContent table {
+        width: 100% !important;
+        table-layout: fixed;
+    }
+
+    #pdfContent th,
+    #pdfContent td {
+        word-wrap: break-word;
+        white-space: normal;
+    }
 </style>
 @endsection
 
@@ -41,6 +53,7 @@
     <div class="card">
         <div class="card-body">
 
+            {{-- FILTER --}}
             <form action="/report/cari" method="get">
                 <div class="row align-items-end">
 
@@ -56,7 +69,6 @@
                                value="{{ request('to', $to) }}">
                     </div>
 
-                    {{-- FILTER KELAS dengan panah --}}
                     <div class="col-md-2 waktu mb-4">
                         <label>Kelas :</label>
                         <div class="select-wrapper" id="kelas-wrapper-report">
@@ -72,89 +84,88 @@
                         </div>
                     </div>
 
-                    {{-- TOMBOL FILTER --}}
                     <div class="col-md-2 waktu mb-4">
                         <button type="submit"
-                                name="filter"
                                 class="btn btn-primary w-100"
                                 style="margin-top: 25px">
                             Filter
                         </button>
                     </div>
 
-                    {{-- TOMBOL PRINT --}}
+                    {{-- SAVE PDF --}}
                     <div class="col-md-2 waktu mb-4">
                         <button type="button"
                                 class="btn btn-outline-success w-100"
                                 style="margin-top: 25px"
-                                onclick="window.print()">
-                            Print
+                                onclick="savePDF()">
+                            Save PDF
                         </button>
                     </div>
 
                 </div>
             </form>
 
-            {{-- HEADER --}}
-            <div class="mt-2">
-                <h3 class="text-center mb-4">Laporan Absensi</h3>
-                <h6>Dari Tanggal : {{ $from }}</h6>
-                <h6>Sampai Tanggal : {{ $to }}</h6>
-                @if(request('kelas'))
-                    <h6>Kelas : {{ request('kelas') }}</h6>
-                @endif
-            </div>
+            {{-- AREA PDF --}}
+            <div id="pdfContent">
 
-            {{-- TABEL --}}
-            <table class="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama</th>
-                        <th>Kelas</th>
-                        <th>Hadir</th>
-                        <th>Ijin</th>
-                        <th>Sakit</th>
-                        <th>Alfa</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $no = 1; @endphp
-                    @foreach ($m as $a)
+                <div class="mt-2">
+                    <h3 class="text-center mb-4">Laporan Absensi</h3>
+                    <h6>Dari Tanggal : {{ $from }}</h6>
+                    <h6>Sampai Tanggal : {{ $to }}</h6>
+                    @if(request('kelas'))
+                        <h6>Kelas : {{ request('kelas') }}</h6>
+                    @endif
+                </div>
+
+                <table class="table table-bordered mt-3">
+                    <thead>
                         <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $a->nama }}</td>
-                            <td>{{ $a->email ?? '-' }}</td>
-
-                            <td>{{ $a->absensis->where('keterangan','Hadir')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
-                            <td>{{ $a->absensis->where('keterangan','Ijin')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
-                            <td>{{ $a->absensis->where('keterangan','Sakit')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
-                            <td>{{ $a->absensis->where('keterangan','Alfa')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                            <th style="width:5%">ID</th>
+                            <th style="width:35%">Nama</th>
+                            <th style="width:15%">Kelas</th>
+                            <th style="width:9%">Hadir</th>
+                            <th style="width:9%">Ijin</th>
+                            <th style="width:9%">Sakit</th>
+                            <th style="width:9%">Alfa</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @php $no = 1; @endphp
+                        @foreach ($m as $a)
+                            <tr>
+                                <td>{{ $no++ }}</td>
+                                <td>{{ $a->nama }}</td>
+                                <td>{{ $a->email ?? '-' }}</td>
+                                <td>{{ $a->absensis->where('keterangan','Hadir')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                                <td>{{ $a->absensis->where('keterangan','Ijin')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                                <td>{{ $a->absensis->where('keterangan','Sakit')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                                <td>{{ $a->absensis->where('keterangan','Alfa')->whereBetween('tanggal',[$from,$to])->count() ?: '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectReport = document.getElementById('kelas-select-report');
-        const wrapperReport = document.getElementById('kelas-wrapper-report');
+{{-- HTML2PDF --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-        if (selectReport && wrapperReport) {
-            selectReport.addEventListener('focus', function () {
-                wrapperReport.classList.add('open');
-            });
-            selectReport.addEventListener('blur', function () {
-                wrapperReport.classList.remove('open');
-            });
-            selectReport.addEventListener('click', function () {
-                wrapperReport.classList.toggle('open');
-            });
-        }
-    });
+<script>
+    function savePDF() {
+        const element = document.getElementById('pdfContent');
+
+        const opt = {
+            margin: 0.4,
+            filename: 'Laporan_Absensi_{{ $from }}_sd_{{ $to }}.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 1.3 },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    }
 </script>
 @endsection
