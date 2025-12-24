@@ -119,6 +119,31 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCount();
     });
 });
+
+document.getElementById('checkAllAbsen').addEventListener('change', function () {
+    document.querySelectorAll('.checkItemAbsen').forEach(cb => {
+        cb.checked = this.checked;
+    });
+});
+
+function submitBulkAbsen() {
+    const checked = document.querySelectorAll('.checkItemAbsen:checked');
+
+    if (checked.length === 0) {
+        alert('Pilih minimal satu data absen!');
+        return;
+    }
+
+    if (confirm('Yakin hapus data absen yang dipilih?')) {
+        document.getElementById('bulkDeleteAbsenForm').submit();
+    }
+}
+
+function deleteAllAbsen() {
+    if (confirm('YAKIN hapus SEMUA data absen?')) {
+        window.location.href = '/absen/delete-all';
+    }
+}
     </script>
 
 </body>

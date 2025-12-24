@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('siswas', function (Blueprint $table) {
             $table->bigIncrements('id_siswa');
             $table->string('nama');
-            $table->string('email')->unique()->nullable();
+            $table->string('email');
             $table->text('alamat')->nullable();
             $table->timestamps();
         });
