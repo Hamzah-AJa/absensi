@@ -19,20 +19,41 @@
                     <form action="/report/cari" method="get">
                         <label>Dari Tanggal : </label>
                         <td class="btn">
-                            <input type="date" name="from" class="form-control" required="required">
+                            <input type="date" name="from" class="form-control" required="required"
+                                   value="{{ request('from', $from) }}">
                         </td>
                 </div>
+
                 <div class="col-md-3 waktu mb-5 mt-2">
                     <label> Sampai Tanggal : </label>
                     <td class="btn">
-                        <input type="date" name="to" required="required" class="form-control">
+                        <input type="date" name="to" required="required" class="form-control"
+                               value="{{ request('to', $to) }}">
                     </td>
                 </div>
+
+                {{-- FILTER KELAS --}}
+                <div class="col-md-3 waktu mb-5 mt-2">
+                    <label> Kelas : </label>
+                    <td class="btn">
+                        <select name="kelas" class="form-control">
+                            <option value="">Semua Kelas</option>
+                            @foreach ($listKelas as $kelas)
+                                <option value="{{ $kelas }}"
+                                    {{ request('kelas') == $kelas ? 'selected' : '' }}>
+                                    {{ $kelas }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </td>
+                </div>
+
                 <div class="col-md-3 waktu ">
                     <input type="submit" name="filter" value="Filter"
                            style="margin-top: 33px"
                            class="btn waktu ml-4 btn-primary btn-fill pull-right">
                 </div>
+
                 <div class="col-md-3 waktu">
                     <a href=""
                        class="waktu btn btn-outline-success"
@@ -46,6 +67,9 @@
                 <h3 style="text-align : center;margin-bottom:30px;"> Laporan Absensi </h3>
                 <h6> Dari Tanggal : {{ $from }}</h6>
                 <h6> Sampai Tanggal : {{ $to }}</h6>
+                @if(request('kelas'))
+                    <h6> Kelas : {{ request('kelas') }}</h6>
+                @endif
             </div>
 
             <div class="MyTable">
@@ -55,6 +79,7 @@
                     <tr>
                         <th>#</th>
                         <th>Nama</th>
+                        <th>Kelas</th>
                         <th>Hadir</th>
                         <th>Ijin</th>
                         <th>Sakit</th>
@@ -68,6 +93,8 @@
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $a->nama }}</td>
+                                {{-- kelas diambil dari kolom email pada tabel siswas --}}
+                                <td>{{ $a->email ?? '-' }}</td>
 
                                 {{-- Hadir --}}
                                 <td>
