@@ -3,11 +3,72 @@
 @section('title')
 <title> Absensi | Report </title>
 <style>
-    @media print{
-        .sticky-footer,.waktu,.heder,.btn{display: none;}
-        #navbar{display: none}
+    @media print {
+        .sticky-footer, .waktu, .heder, .btn { display: none; }
+        #navbar { display: none; }
     }
 
+    /* AREA LAPORAN UNTUK PDF */
+    #pdfContent {
+        font-family: Arial, sans-serif;
+        font-size: 11pt;
+        color: #000;
+        padding: 10px 20px;
+    }
+
+    #pdfContent h3 {
+        margin-bottom: 5px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #pdfContent h6 {
+        margin: 2px 0;
+        font-weight: normal;
+    }
+
+    #pdfContent table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    #pdfContent th,
+    #pdfContent td {
+        border: 1px solid #000;
+        padding: 4px 6px;
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 10pt;
+    }
+
+    #pdfContent thead th {
+        background: #f0f0f0;
+        font-weight: bold;
+    }
+
+    /* Lebar kolom tabel */
+    #pdfContent th:nth-child(1),
+    #pdfContent td:nth-child(1) { width: 5%; }
+
+    #pdfContent th:nth-child(2),
+    #pdfContent td:nth-child(2) { width: 30%; }
+
+    #pdfContent th:nth-child(3),
+    #pdfContent td:nth-child(3) { width: 15%; }
+
+    #pdfContent th:nth-child(4),
+    #pdfContent td:nth-child(4),
+    #pdfContent th:nth-child(5),
+    #pdfContent td:nth-child(5),
+    #pdfContent th:nth-child(6),
+    #pdfContent td:nth-child(6),
+    #pdfContent th:nth-child(7),
+    #pdfContent td:nth-child(7) { width: 10%; }
+
+    /* Wrapper select tetap seperti semula */
     .select-wrapper {
         position: relative;
     }
@@ -32,18 +93,6 @@
 
     .select-wrapper.open::after {
         transform: translateY(-50%) rotate(180deg);
-    }
-
-    /* KHUSUS PDF – TANPA MENGUBAH TAMPILAN LAYAR */
-    #pdfContent table {
-        width: 100% !important;
-        table-layout: fixed;
-    }
-
-    #pdfContent th,
-    #pdfContent td {
-        word-wrap: break-word;
-        white-space: normal;
     }
 </style>
 @endsection
@@ -108,8 +157,9 @@
             {{-- AREA PDF --}}
             <div id="pdfContent">
 
-                <div class="mt-2">
-                    <h3 class="text-center mb-4">Laporan Absensi</h3>
+                <h3>Laporan Absensi</h3>
+
+                <div style="margin-bottom: 6px;">
                     <h6>Dari Tanggal : {{ $from }}</h6>
                     <h6>Sampai Tanggal : {{ $to }}</h6>
                     @if(request('kelas'))
@@ -117,16 +167,16 @@
                     @endif
                 </div>
 
-                <table class="table table-bordered mt-3">
+                <table class="table table-bordered mt-2">
                     <thead>
                         <tr>
-                            <th style="width:5%">ID</th>
-                            <th style="width:35%">Nama</th>
-                            <th style="width:15%">Kelas</th>
-                            <th style="width:9%">Hadir</th>
-                            <th style="width:9%">Ijin</th>
-                            <th style="width:9%">Sakit</th>
-                            <th style="width:9%">Alfa</th>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Hadir</th>
+                            <th>Ijin</th>
+                            <th>Sakit</th>
+                            <th>Alfa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,17 +205,18 @@
 
 <script>
     function savePDF() {
-        const element = document.getElementById('pdfContent');
+    const element = document.getElementById('pdfContent');
 
-        const opt = {
-            margin: 0.4,
-            filename: 'Laporan_Absensi_{{ $from }}_sd_{{ $to }}.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 1.3 },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
+    const opt = {
+        margin:       [0.5, 0.4, 0.8, 0.4], // tambah bottom margin
+        filename:     'Laporan_Absensi_{{ $from }}_sd_{{ $to }}.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    };
 
-        html2pdf().set(opt).from(element).save();
-    }
+    html2pdf().set(opt).from(element).save();
+}
 </script>
 @endsection
