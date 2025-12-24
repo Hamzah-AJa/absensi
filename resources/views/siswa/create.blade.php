@@ -24,7 +24,7 @@
                             <input type="text" class="form-control" name="notelp" id="notelp" autofocus
                                 placeholder="08123456789">
 
-                            <label for="email" class="mt-3 form-label"> Kelas <span
+                            <label for="email" class="mt-3 form-label"> Email <span
                                     style="font-style: italic;">(required)</span></label>
                             <input type="text" class="form-control" name="email" id="email" autofocus
                                 placeholder="XII PPLG 2">

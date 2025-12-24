@@ -20,7 +20,7 @@
                     <th>#</th>
                     <th>Nama</th>
                     <th>No Telepon</th>
-                    <th>Kelas</th>
+                    <th>Email</th>
                     <th>Alamat</th>
                     <th>Action</th>
                 </tr>

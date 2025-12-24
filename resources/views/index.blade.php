@@ -1,8 +1,10 @@
 @extends('layout.main')
 
+
 @section('title')
 <title>Absensi | Dashboard</title>
 @endsection
+
 
 @section('content')
 <div class="container">
@@ -25,7 +27,6 @@
                                 <th>#</th>
                                 <th>Tanggal</th>
                                 <th>Nama</th>
-                                <th>Kelas</th> {{-- baru --}}
                                 <th>Keterangan</th>
                                 <th>Action</th>
                             </tr>
@@ -38,8 +39,6 @@
                                     <td>{{ $a->tanggal->isoformat('D/M/YYYY') }}</td>
                                     {{-- aman jika relasi siswa null --}}
                                     <td>{{ optional($a->siswa)->nama ?? '-' }}</td>
-                                    {{-- ambil kelas dari kolom email di tabel siswas --}}
-                                    <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                     <td>
                                         @if ($a->keterangan == 'Sakit')
                                             <span class="badge bg-warning">{{ $a->keterangan }}</span>
@@ -66,6 +65,7 @@
                 </div>
             </div>
 
+
             {{-- Absen Total --}}
             <div class="card" style="margin-top: 50px">
                 <div class="card-header">
@@ -78,7 +78,6 @@
                                 <th>#</th>
                                 <th>Tanggal</th>
                                 <th>Nama</th>
-                                <th>Kelas</th> {{-- baru --}}
                                 <th>Keterangan</th>
                                 <th>Action</th>
                             </tr>
@@ -91,8 +90,6 @@
                                     <td>{{ $a->tanggal->isoformat('D/M/YYYY') }}</td>
                                     {{-- aman jika relasi siswa null --}}
                                     <td>{{ optional($a->siswa)->nama ?? '-' }}</td>
-                                    {{-- ambil kelas dari kolom email di tabel siswas --}}
-                                    <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                     <td>
                                         @if ($a->keterangan == 'Sakit')
                                             <span class="badge bg-warning">{{ $a->keterangan }}</span>
@@ -116,6 +113,7 @@
                             @endforeach
                         </tbody>
                     </table>
+
 
                 </div>
             </div>
