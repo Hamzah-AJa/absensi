@@ -124,13 +124,15 @@
                                         <td>{{ optional($a->siswa)->nama ?? '-' }}</td>
                                         <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                         <td>
-                                            @if ($a->keterangan == 'Sakit')
-                                                <span class="badge bg-warning">{{ $a->keterangan }}</span>
-                                            @elseif ($a->keterangan == 'Hadir')
+                                             @if ($a->keterangan == 'Sakit')
+                                                <span class="badge bg-warning text-white">{{ $a->keterangan }}</span>
+                                             @elseif ($a->keterangan == 'Hadir')
                                                 <span class="badge bg-success">{{ $a->keterangan }}</span>
-                                            @else
-                                                <span class="badge bg-danger">{{ $a->keterangan }}</span>
-                                            @endif
+                                             @elseif ($a->keterangan == 'Ijin')
+                                                <span class="badge bg-primary">{{ $a->keterangan }}</span> {{-- biru --}}
+                                             @else
+                                             <span class="badge bg-danger">{{ $a->keterangan }}</span>
+                                             @endif
                                         </td>
                                         <td>
                                             <a href="/absen/{{ $a->id_absensi }}/edit" class="btn btn-warning text-white">
@@ -196,9 +198,11 @@
                                         <td>{{ optional($a->siswa)->email ?? '-' }}</td>
                                         <td>
                                             @if ($a->keterangan == 'Sakit')
-                                                <span class="badge bg-warning">{{ $a->keterangan }}</span>
+                                                <span class="badge bg-warning text-white">{{ $a->keterangan }}</span>
                                             @elseif ($a->keterangan == 'Hadir')
                                                 <span class="badge bg-success">{{ $a->keterangan }}</span>
+                                            @elseif ($a->keterangan == 'Ijin')
+                                                <span class="badge bg-primary">{{ $a->keterangan }}</span> {{-- biru --}}
                                             @else
                                                 <span class="badge bg-danger">{{ $a->keterangan }}</span>
                                             @endif
